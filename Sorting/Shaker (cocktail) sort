@@ -1,0 +1,65 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+ 
+public class ShakerSort {
+ 
+    static void shakerSort(int niza[], int n)
+    {  
+        int minCounter = 0;
+        int maxCounter = 0;
+        boolean done = false;
+        for (int j=0; j < (niza.length+1)/2; ++j) {
+ 
+        done = true;    
+ 
+        //bubbleSortMin
+        for (int i = niza.length-1; i > minCounter; --i) {
+                if (niza[i] < niza[i-1]) {
+                    int temp = niza[i];
+                    niza[i] = niza[i-1];
+                    niza[i-1] = temp;
+                    done = false;
+                }
+            }
+        ++minCounter;
+        write(niza);
+ 
+        //bubbleSortMax
+        for (int i= maxCounter; i < niza.length -1; ++i ) {
+            if (niza[i] > niza[i+1]) {
+                int temp = niza[i];
+                niza[i] = niza[i+1];
+                niza[i+1] = temp;
+                done = false;
+            }
+        }
+        ++maxCounter;
+        write(niza);
+        if (done)
+            break;
+        }
+    }
+ 
+    static void write(int [] niza) {
+        int i;
+        for (i=0; i<niza.length; ++i)
+            System.out.print(niza[i] + " ");
+        System.out.println();
+    }
+ 
+ 
+    public static void main(String[] args) throws IOException{
+        int i;
+        BufferedReader stdin = new BufferedReader( new InputStreamReader(System.in));
+        String s = stdin.readLine();
+        int n = Integer.parseInt(s);
+ 
+        s = stdin.readLine();
+        String [] pom = s.split(" ");
+        int [] a = new int[n];
+        for(i=0;i<n;i++)
+            a[i]=Integer.parseInt(pom[i]);
+        shakerSort(a,n);
+    }
+}
