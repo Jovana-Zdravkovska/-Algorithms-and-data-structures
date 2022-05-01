@@ -1,0 +1,163 @@
+import java.util.Scanner;
+
+interface IMarathon {
+	public Athlete bestTime();
+	public int AthletesFrom(String s);	
+}
+
+class Athlete {
+	private String name;
+	private String gender;
+	private String countryOfOrgin;
+	private int age;
+	private double timeScoreInSeconds;
+	
+	Athlete(){}
+	Athlete(String name, String gender, int age, double timeScoreInSeconds, String countryOfOrgin){
+		this.name=name;
+		this.gender=gender;
+		this.countryOfOrgin=countryOfOrgin;
+		this.age=age;
+		this.timeScoreInSeconds=timeScoreInSeconds;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	public String getCountryOfOrgin() {
+		return countryOfOrgin;
+	}
+	public void setCountryOfOrgin(String countryOfOrgin) {
+		this.countryOfOrgin = countryOfOrgin;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public double getTimeScoreInSeconds() {
+		return timeScoreInSeconds;
+	}
+	public void setTimeScoreInSeconds(double timeScoreInSeconds) {
+		this.timeScoreInSeconds = timeScoreInSeconds;
+	}
+	
+	@Override
+	public String toString() {
+		return name + "\n" + age +"\n"+ countryOfOrgin + "\n" + timeScoreInSeconds + "\n";
+	}
+
+}
+
+
+
+class Marathon implements IMarathon{
+	private String hostCountry;
+	private int year;
+	private Athlete Athletes[];
+	
+	Marathon(){}
+	Marathon(String hostCountry, int year, Athlete Athletes[]){
+		this.hostCountry=hostCountry;
+		this.year=year;
+		this.Athletes=Athletes;
+	}
+	public String getHostCountry() {
+		return hostCountry;
+	}
+	public void setHostCountry(String hostCountry) {
+		this.hostCountry = hostCountry;
+	}
+	public int getYear() {
+		return year;
+	}
+	public void setYear(int year) {
+		this.year = year;
+	}
+	public Athlete[] getAthletes() {
+		return Athletes;
+	}
+	public void setAthletes(Athlete[] athletes) {
+		Athletes = athletes;
+	}
+	
+	@Override
+	public String toString() {
+		String res = "";
+		for(int i=0; i<Athletes.length; i++){
+			res+=Athletes[i].toString();
+		}
+		return hostCountry + "\n" + year + "\n" + res;
+	}
+	
+	public Athlete bestTime() {
+		Athlete temp=Athletes[0];
+		for(int i=0; i<Athletes.length; i++) {
+			if(Athletes[i].getTimeScoreInSeconds()<temp.getTimeScoreInSeconds()) {
+				temp=Athletes[i];
+			}
+		}
+		return temp;
+	}
+	public int AthletesFrom(String s) {
+		int sum=0;
+		for(int i=0; i<Athletes.length; i++) {
+			if(Athletes[i].getCountryOfOrgin().contentEquals(s)) {
+				sum++;
+			}
+		}
+		return sum;
+	}
+}
+
+
+public class Test {
+
+    public static void main(String[] args) {
+        Scanner input=new Scanner(System.in);
+        int n=input.nextInt();
+        Athlete[] atleticari = new Athlete[n];
+        
+        String ime;
+        String pol;
+        int vozrast;
+        double vreme;
+        String zemja;
+        
+        input.nextLine();
+            
+        for(int i=0;i<n;i++)
+        {
+            ime = input.nextLine();
+            pol = input.nextLine();
+            vozrast = input.nextInt();
+            vreme = input.nextDouble();
+            input.nextLine();
+            zemja = input.nextLine();
+            atleticari[i]=new Athlete(ime,pol,vozrast,vreme,zemja);
+        }
+        
+        String mesto;
+        int godina;
+        String zemjaP;
+        mesto = input.nextLine();
+        godina = input.nextInt();
+        input.nextLine();
+        
+        Marathon m1 = new Marathon(mesto, godina, atleticari);
+        System.out.print(m1.toString());
+        
+        zemjaP = input.nextLine();
+        System.out.println("Prvo mesto: " + m1.bestTime().toString());
+        System.out.println("Ima vkupno " + m1.AthletesFrom(zemjaP) + " atleticar/i od " + zemjaP);
+    }
+}
