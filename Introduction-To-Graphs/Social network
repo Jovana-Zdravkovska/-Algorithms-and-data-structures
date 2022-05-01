@@ -1,0 +1,183 @@
+import java.util.LinkedList;
+import java.util.Scanner;
+
+public class CountFacebookFriends {
+ 
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int N = Integer.parseInt(scanner.nextLine());
+        Graph<String> facebookGraph = new Graph<>(N);
+ 
+        for (int i = 0; i < N; i++) {
+            int numFriends = Integer.parseInt(scanner.nextLine());
+            for (int j = 0; j < numFriends; j++) {
+                String[] parts = scanner.nextLine().split("\\s+");
+                int index = Integer.parseInt(parts[0]);
+                String username = parts[1] + parts[2];
+                facebookGraph.setInfo(index, username);
+                facebookGraph.addEdge(i, index);
+            }
+        }
+ 
+        int start = scanner.nextInt();
+        int end = scanner.nextInt();
+ 
+        System.out.println(facebookGraph.distance(start, end));
+    }
+}
+ 
+class Graph<E> {
+ 
+    private int V;
+    private Node<E>[] adjList;
+ 
+    public Graph(int V, E[] list) {
+        this.V = V;
+        adjList = new Node[V];
+        for (int i = 0; i < V; i++)
+            adjList[i] = new Node<>(i, list[i]);
+    }
+ 
+    public Graph(int V) {
+        this.V = V;
+        adjList = new Node[V];
+    }
+ 
+    public boolean areAdjacent(int x, int y) {
+        return adjList[x].containsNeighbour(adjList[y]);
+    }
+ 
+    public void addEdge(int x, int y) {
+        if (adjList[x] == null)
+            adjList[x] = new Node<>(x, null);
+        if (adjList[y] == null)
+            adjList[y] = new Node<>(y, null);
+        adjList[x].addNeighbour(adjList[y]);
+    }
+ 
+    public boolean deleteEdge(int x, int y) {
+        return adjList[x].removeNeighbour(adjList[y]);
+    }
+ 
+    public void setInfo(int index, E info) {
+        if (adjList[index] == null)
+            adjList[index] = new Node<E>(index, info);
+        else
+            adjList[index].info = info;
+    }
+ 
+    
+    public int distance(int start, int end) {
+        QueueList<Node<E>> queue = new QueueList<>();
+        boolean[] visited = new boolean[V];
+        
+        int[] distance = new int[V];
+ 
+        if (adjList[start] == null)
+            return 0;
+ 
+        queue.enqueue(adjList[start]);
+        visited[start] = true;
+        distance[end] = 0;
+ 
+        while (!queue.isEmpty()) {
+            Node<E> node = queue.dequeue();
+ 
+            for (Node<E> neighbour : node.neighbours) {
+                if (!visited[neighbour.index]) {
+                    visited[neighbour.index] = true;
+                    distance[neighbour.index] = distance[node.index] + 1;
+                    queue.enqueue(neighbour);
+                }
+                if (neighbour.index == end)
+                    return distance[end];
+            }
+        }
+        return -1; 
+    }
+ 
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (Node<E> n : adjList)
+            builder.append(n);
+        return builder.toString();
+    }
+ 
+    private class Node<T> {
+        int index;
+        T info;
+        LinkedList<Node<T>> neighbours;
+ 
+        Node(int index, T data) {
+            this.index = index;
+            this.info = data;
+            neighbours = new LinkedList<Node<T>>();
+        }
+ 
+        void addNeighbour(Node<T> node) {
+            neighbours.add(node);
+        }
+ 
+        boolean containsNeighbour(Node<T> node) {
+            return neighbours.contains(node);
+        }
+ 
+        boolean removeNeighbour(Node<T> node) {
+            if (neighbours.contains(node)) {
+                neighbours.remove(node);
+                return true;
+            }
+            return false;
+        }
+ 
+        public boolean equals(Object object) {
+            if (object == null)
+                return false;
+            if (this == object)
+                return true;
+            if (this.getClass() != object.getClass())
+                return false;
+            @SuppressWarnings("unchecked")
+            Node<T> other = (Node<T>) object;
+            return index == other.index&&info.equals(other.info);
+        }
+ 
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(index);
+            builder.append(" ");
+            builder.append(info.toString());
+            builder.append(": ");
+            for (Node<T> n : neighbours) {
+                builder.append(n.info.toString());
+                builder.append(" -> ");
+            }
+            if (neighbours.size() > 0)
+                builder.delete(builder.length() - 4, builder.length());
+            builder.append("\n");
+            return builder.toString();
+        }
+ 
+    }
+}
+ 
+class QueueList<E> {
+    private LinkedList<E> list;
+ 
+    public QueueList() {
+        list = new LinkedList<>();
+    }
+ 
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+ 
+    public void enqueue(E el) {
+        list.addLast(el);
+    }
+ 
+    public E dequeue() {
+        return list.removeFirst();
+    }
+}
