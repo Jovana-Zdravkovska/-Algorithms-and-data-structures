@@ -1,0 +1,200 @@
+import java.util.Scanner;
+
+class MyException extends Exception{
+    
+    MyException(){
+        
+    }
+    MyException(String s){
+        System.out.println(s);
+    }
+}
+
+class Trip{
+	private String name;
+	private int price;
+	
+	Trip(){}
+	Trip(String name, int price){
+		this.name=name;
+		this.price=price;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	
+	public int vratiVremeVoDenovi() {
+		return 0;
+	}
+	
+	public static int minPrice(Trip[] niza, int n, Trip holiday) {
+		int min=0, flag=1;
+		for(int i=0; i<niza.length; i++) {
+			if(niza[i].vratiVremeVoDenovi()>holiday.vratiVremeVoDenovi()) {
+				if(flag==1)
+                {
+                    min = niza[i].price;
+                    flag=0;
+                }
+                if(niza[i].price < min)
+                {
+                    min = niza[i].price;
+                }
+			}
+		}
+		return min;
+	}
+	
+}
+
+class Vacation extends Trip {
+	private int days;
+	
+	Vacation(){}
+	Vacation(String name, int price, int days){
+		super(name,price-1000);
+		this.days=days;
+	}
+	public int getDays() {
+		return days;
+	}
+	public void setDays(int days) {
+		this.days = days;
+	}
+	
+	
+	public int vratiVremeVoDenovi() {
+		return this.days;
+	}
+	
+}
+
+class FestiveTrip extends Trip{
+	private int startD, startM, endD, endM;
+	
+	FestiveTrip(){}
+	FestiveTrip(String name, int price, int startD, int startM, int endD, int endM){
+		super(name,price);
+		this.startD=startD;
+		this.startM=startM;
+		this.endD=endD;
+		this.endM=endM;
+		
+		try {
+			if(endM<startM) {
+				throw new MyException("Exception");
+			}
+		}
+		catch(MyException e) {
+			this.startD=endD;
+			this.startM=endM;
+			this.endD=startD;
+			this.endM=startM;
+		}
+	}
+	public int getStartD() {
+		return startD;
+	}
+	public void setStartD(int startD) {
+		this.startD = startD;
+	}
+	public int getStartM() {
+		return startM;
+	}
+	public void setStartM(int startM) {
+		this.startM = startM;
+	}
+	public int getEndD() {
+		return endD;
+	}
+	public void setEndD(int endD) {
+		this.endD = endD;
+	}
+	public int getEndM() {
+		return endM;
+	}
+	public void setEndM(int endM) {
+		this.endM = endM;
+	}
+	
+	public int vratiVremeVoDenovi() {
+		if(this.endM==this.startM) {
+			return this.endD-this.startD;
+		}else {
+			return 30-this.startD+this.endD;
+		}
+	}
+	
+	
+}
+
+public class Test {
+
+	
+	public static void main(String[] args) {
+		
+		
+		int n;
+		Scanner in=new Scanner(System.in);
+		n=in.nextInt();
+		
+		Trip nizaPatuvanje[]=new Trip[n];
+		
+		for (int i=0;i<n;i++){
+			int tip=in.nextInt();
+			if (tip==0){
+				String ime=in.next();
+				int cena =in.nextInt();
+				int vreme=in.nextInt();
+				nizaPatuvanje[i]=new Vacation(ime,cena,vreme);
+			}
+			else {
+				String ime=in.next();
+				int cena =in.nextInt();
+				int pocD=in.nextInt();
+                int pocM=in.nextInt();
+				int krajD=in.nextInt();
+				int krajM=in.nextInt();
+				nizaPatuvanje[i]=new FestiveTrip(ime,cena,pocD,pocM, krajD,krajM);
+				
+			}
+		}
+		
+		for(int i=0; i<nizaPatuvanje.length; i++) {
+			if(nizaPatuvanje[i] instanceof FestiveTrip) {
+				if(((FestiveTrip)nizaPatuvanje[i]).getStartM()==6) {
+					System.out.print(nizaPatuvanje[i].getName() + " ");
+				}
+			}
+		}
+		System.out.println();
+		
+		int sum=0;
+        for(int i=0; i<nizaPatuvanje.length; i++) {
+        	sum+=nizaPatuvanje[i].vratiVremeVoDenovi();
+        }
+        System.out.println(((double)sum/nizaPatuvanje.length));
+		
+        String name = in.next();
+        int price = in.nextInt();
+        int days = in.nextInt();
+        
+        Vacation holiday = new Vacation(name,price,days);
+        
+  		
+		System.out.println(holiday.minPrice(nizaPatuvanje, n, holiday));
+
+		
+
+	}
+
+}
